@@ -1,67 +1,57 @@
--- Máy tính cơ bản cho GameGuardian
-local phepTinhList = {"Cộng (+)", "Trừ (-)", "Nhân (*)", "Chia (/)"}
+-- Máy tính cơ bản bằng Lua (Console)
+local function tinhToan(a, phepTinh, b)
+    if phepTinh == "+" then
+        return a + b
+    elseif phepTinh == "-" then
+        return a - b
+    elseif phepTinh == "*" or phepTinh == "x" then
+        return a * b
+    elseif phepTinh == "/" then
+        if b == 0 then
+            return nil, "Lỗi: Không thể chia cho 0!"
+        end
+        return a / b
+    elseif phepTinh == "%" then
+        if b == 0 then
+            return nil, "Lỗi: Không thể chia lấy dư cho 0!"
+        end
+        return a % b
+    elseif phepTinh == "^" then
+        return a ^ b
+    else
+        return nil, "Lỗi: Phép tính không hợp lệ!"
+    end
+end
+
+print("=== MAY TINH CO BAN LUA ===")
+print("Ho tro cac phep tinh: +  -  *  /  %  ^")
 
 while true do
-    -- Tạo hộp thoại nhập liệu trực quan
-    local input = gg.prompt(
-        {
-            "Nhập số thứ nhất:",
-            "Chọn phép tính [1: +, 2: -, 3: *, 4: /]:",
-            "Nhập số thứ hai:",
-            "Thoát máy tính"
-        },
-        {0, 1, 0, false},
-        {"number", "number", "number", "checkbox"}
-    )
-
-    -- Nếu nhấn Hủy (Cancel) hoặc tích chọn Thoát
-    if input == nil or input[4] == true then
-        gg.toast("Đã đóng máy tính")
+    io.write("\nNhap so thu nhat (hoac go 'q' de thoat): ")
+    local inputA = io.read()
+    if inputA == "q" or inputA == "Q" then
+        print("Da thoat chuong trinh.")
         break
     end
 
-    local a = tonumber(input[1])
-    local op = tonumber(input[2])
-    local b = tonumber(input[3])
-
-    if not a or not b then
-        gg.alert("⚠️ Vui lòng nhập số hợp lệ!")
+    local a = tonumber(inputA)
+    if not a then
+        print("Vui long nhap mot so hop le!")
     else
-        local ketQua = 0
-        local kyHieu = ""
-        local hopLe = true
+        io.write("Nhap phep tinh (+, -, *, /, %, ^): ")
+        local op = io.read()
 
-        if op == 1 then
-            ketQua = a + b
-            kyHieu = "+"
-        elseif op == 2 then
-            ketQua = a - b
-            kyHieu = "-"
-        elseif op == 3 then
-            ketQua = a * b
-            kyHieu = "*"
-        elseif op == 4 then
-            if b == 0 then
-                gg.alert("❌ Lỗi: Không thể chia cho 0!")
-                hopLe = false
-            else
-                ketQua = a / b
-                kyHieu = "/"
-            end
+        io.write("Nhap so thu hai: ")
+        local b = tonumber(io.read())
+
+        if not b then
+            print("So thu hai khong hop le!")
         else
-            gg.alert("⚠️ Vui lòng chọn phép tính từ 1 đến 4!")
-            hopLe = false
-        end
-
-        if hopLe then
-            local thongBao = string.format("Phép tính: %g %s %g\nKết quả = %g", a, kyHieu, b, ketQua)
-            local luaChon = gg.alert(thongBao, "Tính tiếp", "Sao chép KQ", "Thoát")
-            
-            if luaChon == 2 then
-                gg.copyText(tostring(ketQua))
-                gg.toast("Đã sao chép: " .. tostring(ketQua))
-            elseif luaChon == 3 then
-                break
+            local ketQua, loi = tinhToan(a, op, b)
+            if loi then
+                print(loi)
+            else
+                print(string.format("Ket qua: %g %s %g = %g", a, op, b, ketQua))
             end
         end
     end
